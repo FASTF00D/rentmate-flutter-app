@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 
 
-class InputField extends StatelessWidget {
+class InputFieldQuiz extends StatelessWidget {
 
   final controller;
   final bool obscureText;
   final String hintText;
+  final onChanged;
 
-  const InputField({Key? key,
+  const InputFieldQuiz({Key? key,
     required this.controller,
     required this.hintText,
     required this.obscureText,
+    required this.onChanged
   }) : super(key: key);
 
   @override
@@ -22,10 +24,11 @@ class InputField extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 25),
           child: TextFormField(
+            onChanged: onChanged,
             controller: controller,
             obscureText: obscureText,
             decoration: InputDecoration(
-              border: OutlineInputBorder(
+              border: const OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
               hintText: hintText,
@@ -36,5 +39,3 @@ class InputField extends StatelessWidget {
     );
   }
 }
-
-
