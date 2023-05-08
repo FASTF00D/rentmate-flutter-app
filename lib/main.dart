@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rentmate_flutter_app/auth_page.dart';
-import 'package:rentmate_flutter_app/login_page.dart';
-import 'package:rentmate_flutter_app/quiz/QuizScreen.dart';
-import 'package:rentmate_flutter_app/register_screen.dart';
+import 'package:rentmate_flutter_app/entry_point.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -21,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return  const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home:  AuthPage(),
+      home:  EntryPoint(),
     );
   }
 }

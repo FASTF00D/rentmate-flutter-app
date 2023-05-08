@@ -45,7 +45,7 @@ class GroupScroll extends StatelessWidget {
             Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.only(top: 8.0, right: 8.0),
                   child: SizedBox(
                     height: 110,
                     width: 340,
@@ -67,7 +67,7 @@ class GroupScroll extends StatelessWidget {
                             children: [
                               Text(
                                 '${group['min_price']} - ${group['max_price']} грн',
-                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                               ),
                             ],
                           ),

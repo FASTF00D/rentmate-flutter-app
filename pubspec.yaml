@@ -39,6 +39,7 @@ dependencies:
   cool_alert: ^2.0.1
   quickalert: ^1.0.1
   shared_preferences: ^2.1.0
+  rive: ^0.10.4
 
 dev_dependencies:
   flutter_test:
@@ -66,6 +67,7 @@ flutter:
   assets:
     - assets/images/
     - assets/fonts/
+    - assets/RiveAssets/
     - assets/fonts/Gilroy-Medium.ttf
     - assets/fonts/Gilroy-Bold.ttf
     - assets/fonts/Gilroy-Semibold.ttf
