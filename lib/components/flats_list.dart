@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:http/http.dart' as http;
 
-class FlatScroll extends StatelessWidget {
+class FlatList extends StatelessWidget {
   final List<Map<String, dynamic>> flats;
   final List<ImageProvider> images;
 
-  const FlatScroll({Key? key, required this.flats, required this.images})
+  const FlatList({Key? key, required this.flats, required this.images})
       : super(key: key);
+
 
   Future<void> _redirectToFlatPage(BuildContext context, String uuid) async {
     QuickAlert.show(context: context,
@@ -35,8 +36,10 @@ class FlatScroll extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
+      scrollDirection: Axis.vertical,
+      child: Wrap(
+        spacing: 8.0,
+        runSpacing: 8.0,
         children: [
           for (var i = 0; i < flats.length; i++)
             Padding(
@@ -68,7 +71,7 @@ class FlatScroll extends StatelessWidget {
                                       ),
                                 ),
                               )
-                                : ClipRRect(
+                                :  ClipRRect(
                               borderRadius: BorderRadius.circular(15),
                               child: Image.asset('assets/images/flat_image.png')),
                           const SizedBox(height: 10),

@@ -9,16 +9,20 @@ import 'package:rentmate_flutter_app/components/flats_scroll_widget.dart';
 import 'package:rentmate_flutter_app/components/group_scroll_widget.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  List<Map<String, dynamic>> groups = [];
+  List<Map<String, dynamic>> flats = [];
+  List<ImageProvider> images = [];
+
+   HomePage({Key? key,
+  required this.groups,
+  required this.flats,
+  required this.images}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Map<String, dynamic>> _groups = [];
-  List<Map<String, dynamic>> _flats = [];
-  List<ImageProvider> _images = [];
 
   Timer? _timer;
 
@@ -41,7 +45,7 @@ class _HomePageState extends State<HomePage> {
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         setState(() {
-          _groups = List<Map<String, dynamic>>.from(data);
+          widget.groups = List<Map<String, dynamic>>.from(data);
         });
       } else {
         print('Failed to fetch groups');
@@ -58,7 +62,7 @@ class _HomePageState extends State<HomePage> {
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         setState(() {
-          _flats = List<Map<String, dynamic>>.from(data);
+          widget.flats = List<Map<String, dynamic>>.from(data);
         });
         await _fetchImages();
       } else {
@@ -71,19 +75,22 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _fetchImages() async {
     List<ImageProvider> images = [];
-    for (final flat in _flats) {
+    for (final flat in widget.flats) {
       String photoUrl = flat['photos'][0];
+      print('photo url:   ' + photoUrl);
       http.Response response = await http.get(Uri.parse(photoUrl));
+      print('reponsebody:    ' +response.body);
       if (response.statusCode == 200) {
-        images.add(Image
-            .memory(base64Decode(response.body))
-            .image);
+        // Remove the prefix from the base64-encoded data
+        String base64Image = response.body.replaceFirst('data:image/png;base64,', '');
+        images.add(Image.memory(base64Decode(base64Image)).image);
       }
     }
     setState(() {
-      _images = images;
+      widget.images = images;
     });
   }
+
 
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
@@ -132,8 +139,8 @@ class _HomePageState extends State<HomePage> {
                           0xFF536AA1), fontWeight: FontWeight.bold),)
                     ],
                   ),
-                  _groups.isNotEmpty
-                      ? GroupScroll(groups: _groups)
+                  widget.groups.isNotEmpty
+                      ? GroupScroll(groups: widget.groups)
                       : const CircularProgressIndicator(color: Colors.black,),
 
                   const SizedBox(height: 40),
@@ -147,8 +154,8 @@ class _HomePageState extends State<HomePage> {
                           0xFF536AA1), fontWeight: FontWeight.bold),)
                     ],
                   ),
-                      _flats.isNotEmpty
-                      ? FlatScroll(flats: _flats, images: _images)
+                      widget.flats.isNotEmpty
+                      ? FlatScroll(flats: widget.flats, images: widget.images)
                       : const CircularProgressIndicator(color: Colors.black,),
                 ],
               ),

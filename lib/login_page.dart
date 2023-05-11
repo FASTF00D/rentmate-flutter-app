@@ -36,7 +36,7 @@ class _LoginScreenState extends State<LoginPage> {
           headers: {"Content-Type": "application/json"},
           body: body
       );
-
+      print(response.body);
       if (response.statusCode == 200) {
         var responseData = jsonDecode(response.body.toString());
         SharedPreferences prefs = await SharedPreferences.getInstance();

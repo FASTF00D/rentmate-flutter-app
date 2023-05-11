@@ -1,29 +1,30 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:rentmate_flutter_app/groups_page.dart';
 import 'package:rentmate_flutter_app/home_page.dart';
+import 'package:rentmate_flutter_app/my_rents_pages/my_rents_page.dart';
 import 'package:rentmate_flutter_app/utils/rive_utils.dart';
 import 'package:rive/rive.dart';
 
-import '../../model/menu.dart';
-import 'components/btm_nav_item.dart';
-import 'components/menu_btn.dart';
-import 'components/side_bar/side_bar.dart';
-import 'constants.dart';
+import '../../../model/menu.dart';
+import '../components/btm_nav_item.dart';
+import '../components/menu_btn.dart';
+import '../components/side_bar/side_bar.dart';
+import '../constants.dart';
 
-class EntryPoint extends StatefulWidget {
-  const EntryPoint({Key? key, }) : super(key: key);
+class EntryMyRents extends StatefulWidget {
+  const EntryMyRents({Key? key, }) : super(key: key);
 
   @override
-  State<EntryPoint> createState() => _EntryPointState();
+  State<EntryMyRents> createState() => _EntryMyRentsState();
 }
 
-class _EntryPointState extends State<EntryPoint>
+class _EntryMyRentsState extends State<EntryMyRents>
     with SingleTickerProviderStateMixin {
   bool isSideBarOpen = false;
 
-  Menu selectedBottonNav = bottomNavItems.first;
-  Menu selectedSideMenu = sidebarMenus.first;
+  Menu selectedBottonNav = bottomNavItems[3];
 
   late SMIBool isMenuOpenInput;
 
@@ -66,18 +67,9 @@ class _EntryPointState extends State<EntryPoint>
     return Scaffold(
       extendBody: true,
       resizeToAvoidBottomInset: false,
-      backgroundColor: backgroundColor2,
+      backgroundColor: Color(0xFF536AA1),
       body: Stack(
         children: [
-          AnimatedPositioned(
-            width: 288,
-            height: MediaQuery.of(context).size.height,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.fastOutSlowIn,
-            left: isSideBarOpen ? 0 : -288,
-            top: 0,
-            child: const SideBar(),
-          ),
           Transform(
             alignment: Alignment.center,
             transform: Matrix4.identity()
@@ -92,42 +84,9 @@ class _EntryPointState extends State<EntryPoint>
                   borderRadius: BorderRadius.all(
                     Radius.circular(24),
                   ),
-                  child: HomePage(),
+                  child: MyRentsPage(),
                 ),
               ),
-            ),
-          ),
-          AnimatedPositioned(
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.fastOutSlowIn,
-            left: isSideBarOpen ? 220 : 0,
-            top: 16,
-            child: MenuBtn(
-              press: () {
-                isMenuOpenInput.value = !isMenuOpenInput.value;
-
-                if (_animationController.value == 0) {
-                  _animationController.forward();
-                } else {
-                  _animationController.reverse();
-                }
-
-                setState(
-                  () {
-                    isSideBarOpen = !isSideBarOpen;
-                  },
-                );
-              },
-              riveOnInit: (artboard) {
-                final controller = StateMachineController.fromArtboard(
-                    artboard, "State Machine");
-
-                artboard.addController(controller!);
-
-                isMenuOpenInput =
-                    controller.findInput<bool>("isOpen") as SMIBool;
-                isMenuOpenInput.value = true;
-              },
             ),
           ),
         ],
@@ -160,6 +119,7 @@ class _EntryPointState extends State<EntryPoint>
                     return BtmNavItem(
                       navBar: navBar,
                       press: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => navBar.redirectPage));
                         RiveUtils.chnageSMIBoolState(navBar.rive.status!);
                         updateSelectedBtmNav(navBar);
                       },

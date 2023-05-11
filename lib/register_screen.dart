@@ -55,7 +55,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
       if (response.statusCode == 201) {
         var responseData = jsonDecode(response.body.toString());
-        print(responseData[1]['token']);
         print("acc created succesfully");
         QuickAlert.show(context: context,
           type: QuickAlertType.info,
@@ -64,7 +63,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           confirmBtnColor: const Color(0xFF556FB9),
           onConfirmBtnTap: () async {
             await Navigator.push(
-                context, MaterialPageRoute(builder: (context) => LoginPage()));
+                context, MaterialPageRoute(builder: (context) => const LoginPage()));
           },
           text: 'Підтвердіть ваш аккаунт на пошті $email',
         );
@@ -192,22 +191,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               onTap: (){register(_usernameController.text.toString(), _passwordController.text.toString(), _passwordConfirmController.text.toString());},
                               child: ConfButton(buttonText: "Зареєструватись",)),
 
-                          Container(
-                          margin: const EdgeInsets.only(left: 20),
-                          child: CheckBoxQuiz()
-                          ),
                         ]
                         )
                       ),
-
-                      Center(
-                        child: SizedBox(
-                           width: MediaQuery.of(context).size.width * 0.8,
-                          child: const Text(
-                              "Задля кращої персоналізації, пройдіть коротке опитувавння, яке займе не більше 2 хвилин, але значно покращить ваш досвід користування.",
-                          style: TextStyle(fontSize: 14, color: Color(0xFF7A8FC3)),),
-                        ),
-                      ),
+                      SizedBox(height: 30),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

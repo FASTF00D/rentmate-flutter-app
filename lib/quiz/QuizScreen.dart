@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:rentmate_flutter_app/entry_pages/entry_point.dart';
 import 'package:rentmate_flutter_app/quiz/QuizScreenAge.dart';
 import 'package:rentmate_flutter_app/quiz/QuizScreenCity.dart';
 import 'package:rentmate_flutter_app/quiz/QuizScreenJob.dart';
@@ -24,9 +26,66 @@ class _QuizScreenState extends State<QuizScreen> {
   int _currentPageIndex = 0;
   bool _isLastPage = false;
 
+  List<Map<String, dynamic>> _groups = [];
+  List<Map<String, dynamic>> _flats = [];
+  List<ImageProvider> _images = [];
+
+  Future<void> _fetchGroups() async {
+    try {
+      final response = await http.get(Uri.parse(
+          'https://deeonepostgres.herokuapp.com/api/groups?page=0&per=5'));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        setState(() {
+          _groups = List<Map<String, dynamic>>.from(data);
+        });
+      } else {
+        print('Failed to fetch groups');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<void> _fetchFlats() async {
+    try {
+      final response = await http.get(Uri.parse(
+          'https://deeonepostgres.herokuapp.com/api/flats?page=0&per=5'));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        setState(() {
+          _flats = List<Map<String, dynamic>>.from(data);
+        });
+        await _fetchImages();
+      } else {
+        print('Failed to fetch flats');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<void> _fetchImages() async {
+    List<ImageProvider> images = [];
+    for (final flat in _flats) {
+      String photoUrl = flat['photos'][0];
+      http.Response response = await http.get(Uri.parse(photoUrl));
+      if (response.statusCode == 200) {
+        images.add(Image.memory(base64Decode(response.body)).image);
+      }
+    }
+    setState(() {
+      _images = images;
+    });
+  }
+
+
   void initState() {
     super.initState();
     _controller.addListener(_onPageChanged);
+    _fetchGroups();
+    _fetchFlats();
+    _fetchImages();
   }
 
 
@@ -51,7 +110,7 @@ class _QuizScreenState extends State<QuizScreen> {
   void _goToHomePage() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => HomePage()),
+      MaterialPageRoute(builder: (context) => EntryPoint(images: _images, flats: _flats, groups: _groups,)),
     );
   }
   approveQuiz(List<String> userAnswer) async {
@@ -86,11 +145,17 @@ class _QuizScreenState extends State<QuizScreen> {
           headers: {"Content-Type": "application/json", 'Authorization': 'Bearer $token'},
           body: body
       );
+      if(response.statusCode == 200){
+        http.Response response = await http.put(
+            Uri.parse('https://deeonepostgres.herokuapp.com/api/users/complete_quiz'),
+            headers: {'Authorization': 'Bearer $token'},
+        );
+      }
       print(response.statusCode);
       print(response.body);
 
       if (response.statusCode == 200) {
-       Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+       Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(groups: _groups, flats: _flats, images: _images, )));
       }
 
 

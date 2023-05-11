@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:rentmate_flutter_app/User.dart';
+import 'package:rentmate_flutter_app/auth_page.dart';
+import 'package:rentmate_flutter_app/entry_pages/entry_point.dart';
 import 'package:rentmate_flutter_app/home_page.dart';
 import 'package:rentmate_flutter_app/login_page.dart';
 import 'package:rentmate_flutter_app/quiz/QuizScreen.dart';
@@ -23,23 +25,18 @@ class QuizOrHomePage {
         if (response.statusCode == 200) {
           // Successfully fetched user details
           final data = json.decode(response.body);
-          if (data['profile']['city_name'] == null || data['profile']['activity'] == null || data['profile']['age'] == null) {
-            // Required data missing, show quiz page if necessary
-            final prefs = await SharedPreferences.getInstance();
-            final needQuiz = prefs.getBool('needQuiz') ?? false;
-            if (needQuiz) {
-              Navigator.push(context, MaterialPageRoute(builder: (context) =>  QuizScreen()));
-            } else {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+          final spreft = await SharedPreferences.getInstance();
+          await spreft.setString('uuid', data['uuid']);
+          if (data['is_quiz_completed'] == false) {
+              Navigator.push(context, MaterialPageRoute(builder: (context) =>  QuizScreen()));}
+
+            else if(data['is_quiz_completed'] == true){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => AuthPage()));
             }
           } else {
             // All required data is present, show home page
-            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => AuthPage()));
           }
-        } else {
-          // Failed to fetch user details, show login page
-          Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
-        }
       }
     }
   }
